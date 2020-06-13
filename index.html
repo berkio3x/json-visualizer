@@ -13,25 +13,47 @@
 
 <script>
     //base case : value is string
+    const braceTypes = {
+        CURLY: 'curly',
+        SQUARE: 'square'
+    }
 
-    function wrapBrace(dom, key) {
 
+    function getBrace(braceType) {
+        switch (braceType) {
+            case braceTypes.CURLY:
+                return {
+                    open: '{',
+                    close: '}'
+                }
+            case braceTypes.SQUARE:
+                return {
+                    open: '[',
+                    close: ']'
+                }
+        }
+    }
+
+    function wrapBrace(dom, key, braceType) {
         var warpperDiv = document.createElement("div")
         var startBrace = document.createElement("span")
+        var brace = getBrace(braceType)
+        console.log('b', brace)
+
         if (typeof key != "undefined") {
-            startBrace.innerText = `${key}: {`
+
+            startBrace.innerText = `${key}: ${brace.open}`
         } else {
-            startBrace.innerText = `{`
+            startBrace.innerText = `${brace.open}`
         }
 
         startBrace.setAttribute("class", "start-brace")
         warpperDiv.appendChild(startBrace)
         warpperDiv.appendChild(dom)
         var endBrace = document.createElement("span")
-        endBrace.innerText = "}"
+        endBrace.innerText = `${brace.close}`
         endBrace.setAttribute("class", "end-brace")
         warpperDiv.appendChild(endBrace)
-
         startBrace.onmouseenter = function() {
             dom.style.borderLeft = "solid 1px gold"
         }
@@ -43,55 +65,70 @@
 
     }
 
+    //     {
+    //   "type": "object",
+    //   "properties": {
+    //     "first_name": { "type": "string" },
+    //     "last_name": { "type": "string" },
+    //     "birthday": { "type": "string", "format": "date" },
+    //     "address": {
+    //       "type": "object",
+    //       "properties": {
+    //         "street_address": { "type": "string" },
+    //         "city": { "type": "string" },
+    //         "state": { "type": "string" },
+    //         "country": { "type" : "string" }
+    //       }
+    //     }
+    //   }
+    // }
 
     // {"demo":{"os":{"windows":"not ok","mac":"good","linux":"best"}}}
+    //     {
+    //   "type": "object",
+    //    "os":[{"windows":"ss"}],
+    //   "properties": {
+    //     "first_name":{"type":"string" }
+    // }
+    // } 
+
+
     function makeDom(data) {
-
-
-
         var domRoot = document.createElement("div")
         for (let [key, value] of Object.entries(data)) {
-            if (typeof value == "string") {
+
+            if (Array.isArray(value)) {
+                var arrayCOntainer = document.createElement("div")
+                for (var i = 0; i < value.length; i++) {
+                    if (value[i] instanceof Object) {
+                        var div = makeDom(value[i])
+                        div = wrapBrace(div, undefined, braceTypes.CURLY)
+                        arrayCOntainer.appendChild(div)
+                    } else {
+                        console.log("else..")
+                        var div = document.createElement("div")
+                        div.innerText = `${value[i]} ,`
+                        div.style.paddingLeft = 20
+                        arrayCOntainer.appendChild(div)
+
+                    }
+                    console.log("domRoot", domRoot)
+                }
+                domRoot.appendChild(wrapBrace(arrayCOntainer, key, braceTypes.SQUARE))
+
+            } else if (typeof value == "string" || typeof value == "number") {
                 var div = document.createElement("div")
                 div.innerText = `${key}: ${value}`
                 domRoot.appendChild(div)
             } else {
                 var div = makeDom(value)
                 console.log(div)
-                    // var k = document.createElement("span")
-                    // k.innerHTML = `${key} : <span class="start-brace">{</span>`
-                    //     // k.onmouseenter = function() {
-                    //     //     this.style.borderLeft = "solid 1px gold"
-                    //     // }
-                    //     // k.onmouseleave = function() {
-                    //     //     this.style.borderLeft = "none"
-                    //     // }
-                    // var endBrace = document.createElement("span")
-                    // endBrace.innerText = `}`
-                    // endBrace.setAttribute("class", "end-brace")
-                div.style.paddingLeft = 10
-                    // domRoot.appendChild(k)
-                domRoot.appendChild(wrapBrace(div, key))
-                    // domRoot.appendChild(endBrace)
+                div.style.paddingLeft = 20
+                domRoot.appendChild(wrapBrace(div, key, braceTypes.CURLY))
             }
-
-
         }
 
         return domRoot
-            //     if (typeof value === "object") {
-            //         var dom = makeDom(value)
-            //             // domRoot.appendChild(dom)
-            //         var k = document.createElement("span")
-            //         k.innerText = `key {`
-            //         dom.appendChild(k)
-            //     } else {
-            //         var dom = document.createElement("div")
-            //         dom.innerHTML = `${key}: ${value}`
-            //     }
-            //     domRoot.appendChild(dom)
-            // }
-            // return domRoot
 
     }
 
@@ -113,7 +150,7 @@
         console.log(`data-: ${data}`)
         let domTree = makeDom(data)
         console.log(domTree)
-        document.getElementById("parsed-tree").appendChild(wrapBrace(domTree))
+        document.getElementById("parsed-tree").appendChild(wrapBrace(domTree, undefined, braceTypes.CURLY))
     })
 </script>
 
@@ -129,6 +166,10 @@
     
     .start-brace,
     .end-brace {
-        color: #bbbbbb;
+        color: #2b901a;
+    }
+    
+    #parsed-tree {
+        font-family: monospace;
     }
 </style>
