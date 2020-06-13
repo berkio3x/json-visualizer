@@ -1,0 +1,134 @@
+<html>
+
+<body>
+    <div class="main">
+        <div> <textarea name="raw" id="source" cols="30" rows="10"></textarea></div>
+        <div id="parsed-tree"> </div>
+    </div>
+
+</body>
+
+</html>
+
+
+<script>
+    //base case : value is string
+
+    function wrapBrace(dom, key) {
+
+        var warpperDiv = document.createElement("div")
+        var startBrace = document.createElement("span")
+        if (typeof key != "undefined") {
+            startBrace.innerText = `${key}: {`
+        } else {
+            startBrace.innerText = `{`
+        }
+
+        startBrace.setAttribute("class", "start-brace")
+        warpperDiv.appendChild(startBrace)
+        warpperDiv.appendChild(dom)
+        var endBrace = document.createElement("span")
+        endBrace.innerText = "}"
+        endBrace.setAttribute("class", "end-brace")
+        warpperDiv.appendChild(endBrace)
+
+        startBrace.onmouseenter = function() {
+            dom.style.borderLeft = "solid 1px gold"
+        }
+        startBrace.onmouseleave = function() {
+            dom.style.borderLeft = "none"
+        }
+
+        return warpperDiv
+
+    }
+
+
+    // {"demo":{"os":{"windows":"not ok","mac":"good","linux":"best"}}}
+    function makeDom(data) {
+
+
+
+        var domRoot = document.createElement("div")
+        for (let [key, value] of Object.entries(data)) {
+            if (typeof value == "string") {
+                var div = document.createElement("div")
+                div.innerText = `${key}: ${value}`
+                domRoot.appendChild(div)
+            } else {
+                var div = makeDom(value)
+                console.log(div)
+                    // var k = document.createElement("span")
+                    // k.innerHTML = `${key} : <span class="start-brace">{</span>`
+                    //     // k.onmouseenter = function() {
+                    //     //     this.style.borderLeft = "solid 1px gold"
+                    //     // }
+                    //     // k.onmouseleave = function() {
+                    //     //     this.style.borderLeft = "none"
+                    //     // }
+                    // var endBrace = document.createElement("span")
+                    // endBrace.innerText = `}`
+                    // endBrace.setAttribute("class", "end-brace")
+                div.style.paddingLeft = 10
+                    // domRoot.appendChild(k)
+                domRoot.appendChild(wrapBrace(div, key))
+                    // domRoot.appendChild(endBrace)
+            }
+
+
+        }
+
+        return domRoot
+            //     if (typeof value === "object") {
+            //         var dom = makeDom(value)
+            //             // domRoot.appendChild(dom)
+            //         var k = document.createElement("span")
+            //         k.innerText = `key {`
+            //         dom.appendChild(k)
+            //     } else {
+            //         var dom = document.createElement("div")
+            //         dom.innerHTML = `${key}: ${value}`
+            //     }
+            //     domRoot.appendChild(dom)
+            // }
+            // return domRoot
+
+    }
+
+
+    function clearTree(root) {
+        root.innerHTML = ""
+    }
+    var sourceInput = document.getElementById("source")
+
+    sourceInput.addEventListener("input", (e) => {
+        clearTree(document.getElementById("parsed-tree"))
+        var data = sourceInput.value
+        try {
+            data = JSON.parse(data)
+        } catch (erro) {
+            console.log("error parsing..")
+        }
+
+        console.log(`data-: ${data}`)
+        let domTree = makeDom(data)
+        console.log(domTree)
+        document.getElementById("parsed-tree").appendChild(wrapBrace(domTree))
+    })
+</script>
+
+<style>
+    .main {
+        display: grid;
+        grid-template-columns: auto auto;
+    }
+    
+    #source {
+        border: solid 1px black;
+    }
+    
+    .start-brace,
+    .end-brace {
+        color: #bbbbbb;
+    }
+</style>
