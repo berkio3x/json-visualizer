@@ -3,7 +3,11 @@
 <body>
     <div class="main">
         <textarea name="raw" id="source" placeholder="Paste your  json here."></textarea>
-        <div id="parsed-tree"> </div>
+        <div id="tree-wrapper">
+            <div id="parsed-tree">
+
+            </div>
+        </div>
     </div>
 
 </body>
@@ -18,6 +22,12 @@
         SQUARE: 'square'
     }
 
+    const valueTypes = {
+        STRING: 'string',
+        NUMEBR: 'number',
+        NULL: 'null',
+        URL: 'url'
+    }
 
     function getBrace(braceType) {
         switch (braceType) {
@@ -34,24 +44,61 @@
         }
     }
 
+    function getValueType(value) {
+        switch (typeof value) {
+            case 'number':
+                return valueTypes.NUMEBR
+            case 'string':
+                {
+                    var expression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
+                    var regex = new RegExp(expression);
+                    if (value.match(regex)) {
+                        return valueTypes.URL
+                    } else {
+                        return valueTypes.STRING
+                    }
+                }
+            case 'null':
+                return valueTypes.NULL
+
+
+        }
+    }
+
+    function makeCollapseIcon() {
+        var icon = document.createElement("img")
+        icon.setAttribute("class", "collapse__icon")
+        icon.style.visibility = "hidden";
+        icon.src = './icons8-plus-black.svg'
+        return icon
+
+
+    }
+
+    function addCollapseIconEvents(collapseIconelement, collapseIconelementWrapper) {
+        collapseIconelementWrapper.onmouseenter = function() {
+            collapseIconelement.style.visibility = "visible";
+        }
+        collapseIconelementWrapper.onmouseleave = function() {
+            collapseIconelement.style.visibility = "hidden";
+        }
+
+    }
+
     function wrapBrace(dom, key, braceType, innerObjectCount) {
         var warpperDiv = document.createElement("div")
         var startBrace = document.createElement("span")
         var brace = getBrace(braceType)
-        console.log('b', brace)
 
         if (typeof key != "undefined") {
-            var __startBrace = `<span class="keys">${key}</span>: <span class="start-brace"> ${brace.open}</span>`
-            if (braceType == braceTypes.SQUARE) {
-
-            }
-
-            startBrace.innerHTML =
+            var collapseIcon = makeCollapseIcon()
+                // addCollapseIconEvents(collapseIcon, warpperDiv)
+            warpperDiv.appendChild(collapseIcon)
+            startBrace.innerHTML = `<span class="keys">${key}</span>: <span class="start-brace"> ${brace.open}</span>`
         } else {
             startBrace.innerText = `${brace.open}`
         }
 
-        // startBrace.setAttribute("class", "start-brace")
         warpperDiv.appendChild(startBrace)
         warpperDiv.appendChild(dom)
         var endBrace = document.createElement("span")
@@ -60,6 +107,7 @@
         warpperDiv.appendChild(endBrace)
         startBrace.onmouseenter = function() {
             dom.style.borderLeft = "solid 1px gold"
+
         }
         startBrace.onmouseleave = function() {
             dom.style.borderLeft = "none"
@@ -72,7 +120,6 @@
     function makeDom(data) {
         var domRoot = document.createElement("div")
         for (let [key, value] of Object.entries(data)) {
-
             if (Array.isArray(value)) {
                 var arrayCOntainer = document.createElement("div")
                 for (var i = 0; i < value.length; i++) {
@@ -81,7 +128,6 @@
                         div = wrapBrace(div, undefined, braceTypes.CURLY)
                         arrayCOntainer.appendChild(div)
                     } else {
-                        console.log("else..")
                         var div = document.createElement("div")
                         div.innerText = `${value[i]} ,`
                         div.style.paddingLeft = 20
@@ -90,15 +136,17 @@
                     }
                     console.log("domRoot", domRoot)
                 }
-                domRoot.appendChild(wrapBrace(arrayCOntainer, key, braceTypes.SQUARE, 9))
+                domRoot.appendChild(wrapBrace(arrayCOntainer, key, braceTypes.SQUARE))
 
             } else if (typeof value == "string" || typeof value == "number") {
+                var valueType = getValueType(value)
                 var div = document.createElement("div")
-                div.innerHTML = `<span class="keys">${key}</span>: ${value}`
+                var Null = undefined;
+
+                div.innerHTML = `<span class="keys">${key}</span>: <span class="${valueType} ${value==='null'?'null':''}">'${value}'</span>`
                 domRoot.appendChild(div)
             } else {
                 var div = makeDom(value)
-                console.log(div)
                 div.style.paddingLeft = 20
                 domRoot.appendChild(wrapBrace(div, key, braceTypes.CURLY))
             }
@@ -131,6 +179,10 @@
 </script>
 
 <style>
+    * {
+        box-sizing: border-box !important;
+    }
+    
     .main {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -150,7 +202,8 @@
     
     .start-brace,
     .end-brace {
-        color: #2b901a;
+        color: #060606;
+        font-style: bold;
     }
     
     #parsed-tree {
@@ -166,5 +219,32 @@
     
     .keys {
         color: #5420ce;
+    }
+    
+    .keys:hover {
+        cursor: pointer;
+    }
+    
+    .collapse__icon {
+        width: 10px;
+        height: 10px;
+        margin-right: 3px;
+    }
+    
+    .number {
+        color: #65b114!important;
+    }
+    
+    .string {
+        color: #65b114;
+    }
+    
+    .null {
+        font-style: italic;
+        color: gray;
+    }
+    
+    .url {
+        text-decoration: underline;
     }
 </style>
