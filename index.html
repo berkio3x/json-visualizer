@@ -42,12 +42,12 @@
 
         if (typeof key != "undefined") {
 
-            startBrace.innerText = `${key}: ${brace.open}`
+            startBrace.innerHTML = `<span class="keys">${key}</span>: <span class="start-brace"> ${brace.open}</span>`
         } else {
             startBrace.innerText = `${brace.open}`
         }
 
-        startBrace.setAttribute("class", "start-brace")
+        // startBrace.setAttribute("class", "start-brace")
         warpperDiv.appendChild(startBrace)
         warpperDiv.appendChild(dom)
         var endBrace = document.createElement("span")
@@ -118,7 +118,7 @@
 
             } else if (typeof value == "string" || typeof value == "number") {
                 var div = document.createElement("div")
-                div.innerText = `${key}: ${value}`
+                div.innerHTML = `<span class="keys">${key}</span>: ${value}`
                 domRoot.appendChild(div)
             } else {
                 var div = makeDom(value)
@@ -165,6 +165,7 @@
         border: solid 1px black;
         height: 100vh;
         border-top: none;
+        border-right-color: #cfd5da;
     }
     
     textarea:focus {
@@ -185,5 +186,9 @@
         font-weight: bold;
         font-family: sans-serif;
         color: #cecdcd;
+    }
+    
+    .keys {
+        color: #5420ce;
     }
 </style>
