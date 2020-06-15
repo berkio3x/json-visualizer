@@ -2,7 +2,7 @@
 
 <body>
     <div class="main">
-        <textarea name="raw" id="source" placeholder="Paste your  json here "></textarea>
+        <textarea name="raw" id="source" placeholder="Paste your  json here."></textarea>
         <div id="parsed-tree"> </div>
     </div>
 
@@ -34,15 +34,19 @@
         }
     }
 
-    function wrapBrace(dom, key, braceType) {
+    function wrapBrace(dom, key, braceType, innerObjectCount) {
         var warpperDiv = document.createElement("div")
         var startBrace = document.createElement("span")
         var brace = getBrace(braceType)
         console.log('b', brace)
 
         if (typeof key != "undefined") {
+            var __startBrace = `<span class="keys">${key}</span>: <span class="start-brace"> ${brace.open}</span>`
+            if (braceType == braceTypes.SQUARE) {
 
-            startBrace.innerHTML = `<span class="keys">${key}</span>: <span class="start-brace"> ${brace.open}</span>`
+            }
+
+            startBrace.innerHTML =
         } else {
             startBrace.innerText = `${brace.open}`
         }
@@ -65,34 +69,6 @@
 
     }
 
-    //     {
-    //   "type": "object",
-    //   "properties": {
-    //     "first_name": { "type": "string" },
-    //     "last_name": { "type": "string" },
-    //     "birthday": { "type": "string", "format": "date" },
-    //     "address": {
-    //       "type": "object",
-    //       "properties": {
-    //         "street_address": { "type": "string" },
-    //         "city": { "type": "string" },
-    //         "state": { "type": "string" },
-    //         "country": { "type" : "string" }
-    //       }
-    //     }
-    //   }
-    // }
-
-    // {"demo":{"os":{"windows":"not ok","mac":"good","linux":"best"}}}
-    //     {
-    //   "type": "object",
-    //    "os":[{"windows":"ss"}],
-    //   "properties": {
-    //     "first_name":{"type":"string" }
-    // }
-    // } 
-
-
     function makeDom(data) {
         var domRoot = document.createElement("div")
         for (let [key, value] of Object.entries(data)) {
@@ -114,7 +90,7 @@
                     }
                     console.log("domRoot", domRoot)
                 }
-                domRoot.appendChild(wrapBrace(arrayCOntainer, key, braceTypes.SQUARE))
+                domRoot.appendChild(wrapBrace(arrayCOntainer, key, braceTypes.SQUARE, 9))
 
             } else if (typeof value == "string" || typeof value == "number") {
                 var div = document.createElement("div")
