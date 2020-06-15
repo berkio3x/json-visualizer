@@ -1,2 +1,2 @@
-# json-vizualizer
 A json visualization tool
+![](./screenshot.png)
