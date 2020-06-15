@@ -2,7 +2,7 @@
 
 <body>
     <div class="main">
-        <div> <textarea name="raw" id="source" cols="30" rows="10"></textarea></div>
+        <textarea name="raw" id="source" placeholder="Paste your  json here "></textarea>
         <div id="parsed-tree"> </div>
     </div>
 
@@ -157,11 +157,18 @@
 <style>
     .main {
         display: grid;
-        grid-template-columns: auto auto;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 10px;
     }
     
     #source {
         border: solid 1px black;
+        height: 100vh;
+        border-top: none;
+    }
+    
+    textarea:focus {
+        outline: none;
     }
     
     .start-brace,
@@ -171,5 +178,12 @@
     
     #parsed-tree {
         font-family: monospace;
+    }
+    
+     ::placeholder {
+        font-size: 40px;
+        font-weight: bold;
+        font-family: sans-serif;
+        color: #cecdcd;
     }
 </style>
