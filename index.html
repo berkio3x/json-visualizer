@@ -87,8 +87,9 @@
 
     function addCollapseEvent(srcElement, targetElement) {
         srcElement.addEventListener("click", (e) => {
+            // alert(targetElement.style.display)
             console.log(targetElement.style.display, "......++")
-            if (targetElement.style.display.value === 'none') {
+            if (targetElement.style.display === 'none') {
                 targetElement.style.display = 'block'
             } else {
                 targetElement.style.display = 'none'
