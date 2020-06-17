@@ -2,10 +2,10 @@
 
 <body>
     <div class="main">
-        <textarea name="raw" id="source" placeholder="Paste your  json here."></textarea>
+        <textarea name="raw" id="source" placeholder="Paste json here."></textarea>
         <div id="tree-wrapper">
+            <!-- <input id="show__indices" type="checkbox" onchange="function ">Show index</input> -->
             <div id="parsed-tree">
-
             </div>
         </div>
     </div>
@@ -29,6 +29,10 @@
         URL: 'url'
     }
 
+
+    /* Returns the opening & closing brace depending upon the braceType
+     *@param braceType - Type of brace
+     */
     function getBrace(braceType) {
         switch (braceType) {
             case braceTypes.CURLY:
@@ -44,6 +48,9 @@
         }
     }
 
+    /* Return the correct class of based on the value type.
+     * @param - value - The value of Object. 
+     */
     function getValueType(value) {
         switch (typeof value) {
             case 'number':
@@ -65,15 +72,43 @@
         }
     }
 
+    /* Return the correct classes applied depending upon the value type,
+     *  Used to generate styling.    
+     * @param : valueType - type of the value, element of `valueType` enum. 
+     */
+    function getClasses(valueType, value) {
+        var classList = [];
+        switch (valueType) {
+            case valueTypes.NUMEBR:
+                classList.push("number")
+            case valueTypes.URL:
+                classList.push("url")
+            case valueTypes.STRING:
+                {
+                    if (value === "null") classList.push("null")
+                    classList.push("string")
+
+
+                }
+
+            case valueTypes.NULL:
+                classList.push("null")
+        }
+        return classList.join(" ")
+    }
+
+
     function makeCollapseIcon() {
         var icon = document.createElement("img")
         icon.setAttribute("class", "collapse__icon")
-        icon.style.visibility = "hidden";
+            // icon.style.visibility = "hidden";
+        icon.style.display = "none"
         icon.src = './icons8-plus-black.svg'
         return icon
 
 
     }
+
 
     function addCollapseIconEvents(collapseIconelement, collapseIconelementWrapper) {
         collapseIconelementWrapper.onmouseenter = function() {
@@ -87,8 +122,7 @@
 
     function addCollapseEvent(srcElement, targetElement) {
         srcElement.addEventListener("click", (e) => {
-            // alert(targetElement.style.display)
-            console.log(targetElement.style.display, "......++")
+            e.preventDefault()
             if (targetElement.style.display === 'none') {
                 targetElement.style.display = 'block'
             } else {
@@ -99,22 +133,21 @@
 
     }
 
+
     function wrapBrace(dom, key, braceType, innerObjectCount) {
         var warpperDiv = document.createElement("div")
+        warpperDiv.setAttribute("class", "object__entry")
         var startBrace = document.createElement("span")
         addCollapseEvent(startBrace, dom)
         var brace = getBrace(braceType)
 
         if (typeof key != "undefined") {
             var collapseIcon = makeCollapseIcon()
-                // addCollapseIconEvents(collapseIcon, warpperDiv)
             warpperDiv.appendChild(collapseIcon)
-
             startBrace.innerHTML = `<span class="keys">${key}</span>: <span class="start-brace"> ${brace.open}</span>`
         } else {
             startBrace.innerText = `${brace.open}`
         }
-
         warpperDiv.appendChild(startBrace)
         warpperDiv.appendChild(dom)
         var endBrace = document.createElement("span")
@@ -133,6 +166,14 @@
 
     }
 
+    function makeIndexSpan(indexValue) {
+        var indexSpan = document.createElement("span")
+        indexSpan.setAttribute("class", "array__index")
+        indexSpan.innerText = indexValue
+        return indexSpan
+    }
+
+
     function makeDom(data) {
         var domRoot = document.createElement("div")
         for (let [key, value] of Object.entries(data)) {
@@ -145,11 +186,15 @@
                         arrayCOntainer.appendChild(div)
                     } else {
                         var div = document.createElement("div")
-                        div.innerText = `${value[i]} ,`
-                        div.style.paddingLeft = 20
+                        div.appendChild(makeIndexSpan(i))
+                        var arrayValue = document.createElement("span")
+                        arrayValue.innerText = `${value[i]} ,`
+                        div.appendChild(arrayValue)
+                            // div.style.paddingLeft = 10
                         arrayCOntainer.appendChild(div)
 
                     }
+
                     console.log("domRoot", domRoot)
                 }
                 domRoot.appendChild(wrapBrace(arrayCOntainer, key, braceTypes.SQUARE))
@@ -157,13 +202,17 @@
             } else if (typeof value == "string" || typeof value == "number") {
                 var valueType = getValueType(value)
                 var div = document.createElement("div")
+                div.setAttribute("class", "object__entry")
                 var Null = undefined;
 
-                div.innerHTML = `<span class="keys">${key}</span>: <span class="${valueType} ${value==='null'?'null':''}">'${value}'</span>`
+                // div.style.paddingLeft = 20
+                div.innerHTML = `<span class="keys">${key}</span>: <span class='${valueType} ${value==="null"?"null":""}'>"${value}"</span>`
                 domRoot.appendChild(div)
             } else {
                 var div = makeDom(value)
-                div.style.paddingLeft = 20
+                div.setAttribute("class", "object__entry")
+
+                // div.style.paddingLeft = 20
                 domRoot.appendChild(wrapBrace(div, key, braceTypes.CURLY))
             }
         }
@@ -224,7 +273,8 @@
     }
     
     #parsed-tree {
-        font-family: monospace;
+        font-size: 12px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     }
     
      ::placeholder {
@@ -270,19 +320,19 @@
         overflow-y: scroll;
     }
     
-    #source::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-        background-color: #F5F5F5;
-        border-radius: 6px;
+    .array__index {
+        display: inline-block;
+        margin-right: 6px;
+        /* background-color: rgb(203, 253, 145); */
+        font-family: monospace;
+        font-size: 0.9em;
+        width: 10px;
+        height: 10px;
+        text-align: center;
+        /* border-radius: 20px; */
     }
     
-    #source::-webkit-scrollbar {
-        width: 6px;
-        background-color: #F5F5F5;
-    }
-    
-    #source::-webkit-scrollbar-thumb {
-        border-radius: 6px;
-        background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(122, 153, 217)), color-stop(0.72, rgb(73, 125, 189)), color-stop(0.86, rgb(28, 58, 148)));
+    .object__entry {
+        padding-left: 10px;
     }
 </style>
