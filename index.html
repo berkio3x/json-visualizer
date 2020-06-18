@@ -26,7 +26,8 @@
         STRING: 'string',
         NUMEBR: 'number',
         NULL: 'null',
-        URL: 'url'
+        URL: 'url',
+        ARRAY: 'array'
     }
 
 
@@ -57,6 +58,10 @@
                 return valueTypes.NUMEBR
             case 'string':
                 {
+
+                    if (value === "null") {
+                        return valueTypes.NULL
+                    }
                     var expression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
                     var regex = new RegExp(expression);
                     if (value.match(regex)) {
@@ -65,10 +70,6 @@
                         return valueTypes.STRING
                     }
                 }
-            case 'null':
-                return valueTypes.NULL
-
-
         }
     }
 
@@ -120,13 +121,16 @@
 
     }
 
-    function addCollapseEvent(srcElement, targetElement) {
+    function addCollapseEvent(srcElement, targetElement, displayType) {
         srcElement.addEventListener("click", (e) => {
             e.preventDefault()
             if (targetElement.style.display === 'none') {
-                targetElement.style.display = 'block'
+                targetElement.style.display = displayType
             } else {
                 targetElement.style.display = 'none'
+                if (targetObjectType === valueTypes.ARRAY) {
+
+                }
             }
 
         })
@@ -134,11 +138,15 @@
     }
 
 
-    function wrapBrace(dom, key, braceType, innerObjectCount) {
+
+
+
+
+    function wrapBrace(dom, key, braceType, innerObjectCount, objectType) {
         var warpperDiv = document.createElement("div")
         warpperDiv.setAttribute("class", "object__entry")
         var startBrace = document.createElement("span")
-        addCollapseEvent(startBrace, dom)
+        addCollapseEvent(startBrace, dom, 'block')
         var brace = getBrace(braceType)
 
         if (typeof key != "undefined") {
@@ -149,6 +157,16 @@
             startBrace.innerText = `${brace.open}`
         }
         warpperDiv.appendChild(startBrace)
+
+        if (braceType === braceTypes.SQUARE) {
+            var countSpan = document.createElement("span")
+            countSpan.setAttribute("class", "array__count")
+            countSpan.style.display = "none"
+            addCollapseEvent(startBrace, countSpan, 'inline')
+            countSpan.innerText = `» ${innerObjectCount}`
+            warpperDiv.appendChild(countSpan)
+        }
+
         warpperDiv.appendChild(dom)
         var endBrace = document.createElement("span")
         endBrace.innerText = `${brace.close}`
@@ -190,29 +208,24 @@
                         var arrayValue = document.createElement("span")
                         arrayValue.innerText = `${value[i]} ,`
                         div.appendChild(arrayValue)
-                            // div.style.paddingLeft = 10
                         arrayCOntainer.appendChild(div)
 
                     }
 
                     console.log("domRoot", domRoot)
                 }
-                domRoot.appendChild(wrapBrace(arrayCOntainer, key, braceTypes.SQUARE))
+                domRoot.appendChild(wrapBrace(arrayCOntainer, key, braceTypes.SQUARE, value.length, valueTypes.ARRAY))
 
             } else if (typeof value == "string" || typeof value == "number") {
                 var valueType = getValueType(value)
+
                 var div = document.createElement("div")
                 div.setAttribute("class", "object__entry")
-                var Null = undefined;
-
-                // div.style.paddingLeft = 20
-                div.innerHTML = `<span class="keys">${key}</span>: <span class='${valueType} ${value==="null"?"null":""}'>"${value}"</span>`
+                div.innerHTML = `<span class="keys">${key}</span>: <span class='${valueType}'>"${value}"</span>`
                 domRoot.appendChild(div)
             } else {
                 var div = makeDom(value)
                 div.setAttribute("class", "object__entry")
-
-                // div.style.paddingLeft = 20
                 domRoot.appendChild(wrapBrace(div, key, braceTypes.CURLY))
             }
         }
@@ -334,5 +347,23 @@
     
     .object__entry {
         padding-left: 10px;
+    }
+    
+    .array__count {
+        /* background-color: #5420ce;
+        color: white; */
+        padding-right: 2px;
+        padding-left: 2px;
+        /* margin: 2px 2px; */
+        /* padding-top: 2px; */
+        text-align: center;
+        /* padding-bottom: 2px; */
+        border-radius: 50%;
+        /* margin-left: 4px; */
+        display: none;
+        /* visibility: hidden; */
+        font-size: 0.8em;
+        display: inline;
+        font-weight: 400;
     }
 </style>
