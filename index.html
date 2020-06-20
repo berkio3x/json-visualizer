@@ -141,8 +141,9 @@
     /**
      * Get the dom elements representing the collpase indicators,
      * ex , if an array is being collapsed we need to see » followed by array count,
-     * if an object is being collapsed, we need on;y »
+     * if an object is being collapsed, we need only »
      * @param {enum} braceType - We can get identify the object type by the enclosing brace
+     * @param {Object} arrayObjectCount - No of elements in the array if the value for a given key is an Array
      **/
     function getCollapseIndicators(braceType, arrayObjectCount) {
         var IndicatorSpan = document.createElement("span")
