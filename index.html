@@ -151,11 +151,11 @@
         IndicatorSpan.style.display = "none"
         if (braceType === braceTypes.SQUARE) {
             IndicatorSpan.setAttribute("class", "array__count")
-            IndicatorSpan.innerText = `» ${arrayObjectCount}`
+            IndicatorSpan.innerText = `... ${arrayObjectCount}`
         }
         if (braceType === braceTypes.CURLY) {
             IndicatorSpan.setAttribute("class", "collapse__indicator")
-            IndicatorSpan.innerText = `»`
+            IndicatorSpan.innerText = `...`
         }
         return IndicatorSpan
     }
@@ -365,7 +365,7 @@
     }
     
     .string {
-        color: #65b114;
+        color: #14ca84;
     }
     
     .null {
