@@ -138,8 +138,25 @@
     }
 
 
-
-
+    /**
+     * Get the dom elements representing the collpase indicators,
+     * ex , if an array is being collapsed we need to see » followed by array count,
+     * if an object is being collapsed, we need on;y »
+     * @param {enum} braceType - We can get identify the object type by the enclosing brace
+     **/
+    function getCollapseIndicators(braceType, arrayObjectCount) {
+        var IndicatorSpan = document.createElement("span")
+        IndicatorSpan.style.display = "none"
+        if (braceType === braceTypes.SQUARE) {
+            IndicatorSpan.setAttribute("class", "array__count")
+            IndicatorSpan.innerText = `» ${arrayObjectCount}`
+        }
+        if (braceType === braceTypes.CURLY) {
+            IndicatorSpan.setAttribute("class", "collapse__indicator")
+            IndicatorSpan.innerText = `»`
+        }
+        return IndicatorSpan
+    }
 
 
     function wrapBrace(dom, key, braceType, innerObjectCount, objectType) {
@@ -156,17 +173,11 @@
         } else {
             startBrace.innerText = `${brace.open}`
         }
+
         warpperDiv.appendChild(startBrace)
-
-        if (braceType === braceTypes.SQUARE) {
-            var countSpan = document.createElement("span")
-            countSpan.setAttribute("class", "array__count")
-            countSpan.style.display = "none"
-            addCollapseEvent(startBrace, countSpan, 'inline')
-            countSpan.innerText = `» ${innerObjectCount}`
-            warpperDiv.appendChild(countSpan)
-        }
-
+        var collapseIndicator = getCollapseIndicators(braceType, innerObjectCount)
+        addCollapseEvent(startBrace, collapseIndicator, 'inline')
+        warpperDiv.appendChild(collapseIndicator)
         warpperDiv.appendChild(dom)
         var endBrace = document.createElement("span")
         endBrace.innerText = `${brace.close}`
