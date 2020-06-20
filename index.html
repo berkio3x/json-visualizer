@@ -218,6 +218,7 @@
                         arrayCOntainer.appendChild(div)
                     } else {
                         var div = document.createElement("div")
+                        div.setAttribute("class", "array__element")
                         div.appendChild(makeIndexSpan(i))
                         var arrayValue = document.createElement("span")
                         arrayValue.innerText = `${value[i]} ,`
@@ -402,7 +403,8 @@
         display: none;
     }
     
-    .object__entry {
+    .object__entry,
+    .array__element {
         padding-left: 10px;
     }
     
