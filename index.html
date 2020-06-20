@@ -171,7 +171,7 @@
         if (typeof key != "undefined") {
             var collapseIcon = makeCollapseIcon()
             warpperDiv.appendChild(collapseIcon)
-            startBrace.innerHTML = `<span class="keys">${key}</span>: <span class="start-brace"> ${brace.open}</span>`
+            startBrace.innerHTML = `<span class="keys">${key}</span> <span class="colon">:</span> <span class="start-brace"> ${brace.open}</span>`
         } else {
             startBrace.innerText = `${brace.open}`
         }
@@ -186,7 +186,8 @@
         endBrace.setAttribute("class", "end-brace")
         warpperDiv.appendChild(endBrace)
         startBrace.onmouseenter = function() {
-            dom.style.borderLeft = "solid 1px gold"
+            dom.style.borderLeft = "solid 0.7px"
+            dom.style.borderLeftColor = "#ABB2B9"
 
         }
         startBrace.onmouseleave = function() {
@@ -234,7 +235,7 @@
 
                 var div = document.createElement("div")
                 div.setAttribute("class", "object__entry")
-                div.innerHTML = `<span class="keys">${key}</span>: <span class='${valueType}'>"${value}"</span>`
+                div.innerHTML = `<span class="keys">${key}</span> <span class="colon">:</span> <span class='${valueType}'>${value}</span>`
                 domRoot.appendChild(div)
             } else {
                 var div = makeDom(value)
@@ -330,12 +331,13 @@
     
     .start-brace,
     .end-brace {
-        color: #060606;
+        color: #2C3E50;
         font-style: bold;
     }
     
     #parsed-tree {
         font-size: 12px;
+        /* font-family: monospace; */
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     }
     
@@ -347,7 +349,7 @@
     }
     
     .keys {
-        color: #5420ce;
+        color: #616A6B;
     }
     
     .keys:hover {
@@ -361,16 +363,16 @@
     }
     
     .number {
-        color: #65b114!important;
+        color: #F39C12!important;
     }
     
     .string {
-        color: #14ca84;
+        color: #239B56;
     }
     
     .null {
         font-style: italic;
-        color: gray;
+        color: #c59e1d;
     }
     
     .url {
@@ -383,15 +385,18 @@
     }
     
     .array__index {
-        display: inline-block;
         margin-right: 6px;
         /* background-color: rgb(203, 253, 145); */
         font-family: monospace;
-        font-size: 0.9em;
-        width: 10px;
-        height: 10px;
+        font-size: 0.8em;
         text-align: center;
-        /* border-radius: 20px; */
+        display: inline-block;
+        background-color: darkseagreen;
+        color: currentcolor;
+        padding-left: 2px;
+        padding-right: 2px;
+        border-radius: 22%;
+        display: none;
     }
     
     .object__entry {
@@ -428,5 +433,10 @@
     
     #error__message {
         font-size: small;
+    }
+    
+    .colon {
+        font-size: 12px;
+        font-weight: bolder;
     }
 </style>
