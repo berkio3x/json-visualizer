@@ -289,6 +289,7 @@
         clearTree(document.getElementById("parsed-tree"))
 
         var data = sourceInput.value
+
         var error = false
         try {
             data = JSON.parse(data)
@@ -297,6 +298,8 @@
             ErrorMessage(e.toString())
         }
         if (!error) {
+            var beautifiedJson = JSON.stringify(data, null, 4);
+            sourceInput.value = beautifiedJson
             clearErrorMessage()
             let domTree = makeDom(data)
             document.getElementById("parsed-tree").appendChild(wrapBrace(domTree, undefined, braceTypes.CURLY))
