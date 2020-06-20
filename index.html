@@ -4,6 +4,7 @@
     <div class="main">
         <textarea name="raw" id="source" placeholder="Paste json here."></textarea>
         <div id="tree-wrapper">
+            <div id="error_message_container"><span id="syntax__error">Syntax error</span> <label id="error__message"></label></div>
             <!-- <input id="show__indices" type="checkbox" onchange="function ">Show index</input> -->
             <div id="parsed-tree">
             </div>
@@ -250,21 +251,57 @@
     function clearTree(root) {
         root.innerHTML = ""
     }
+
+    function clearErrorMessage() {
+        var errorDiv = document.getElementById("error_message_container")
+        errorDiv.style.display = 'none'
+
+    }
+
     var sourceInput = document.getElementById("source")
+
+
+    function getHelpMessage(message) {
+        // alert(message)
+        if (message.includes("Unexpected string in JSON at position")) {
+            return "Maybe you are missing a comma after a key value pair?"
+        }
+        if (message.includes("Unexpected token")) {
+            return "Maybe you forgot to add the ending quotes or some extra character is present after ending quote other than comma"
+        }
+    }
+
+    function ErrorMessage(message) {
+        // alert(typeof message)
+        var errorDiv = document.getElementById("error_message_container")
+        errorDiv.style.display = 'inline'
+        message = message.replace("SyntaxError:", '')
+        var errorMessageIndicator = document.getElementById("syntax__error")
+        errorMessageIndicator.style.display = "inline"
+        var errorLabel = document.getElementById("error__message")
+        message = `${message} 💡 ${getHelpMessage(message)}`
+        errorLabel.innerText = message
+
+    }
 
     sourceInput.addEventListener("input", (e) => {
         clearTree(document.getElementById("parsed-tree"))
+
         var data = sourceInput.value
+        var error = false
         try {
             data = JSON.parse(data)
-        } catch (erro) {
-            console.log("error parsing..")
+        } catch (e) {
+            error = true
+            ErrorMessage(e.toString())
+        }
+        if (!error) {
+            clearErrorMessage()
+            let domTree = makeDom(data)
+            document.getElementById("parsed-tree").appendChild(wrapBrace(domTree, undefined, braceTypes.CURLY))
         }
 
-        console.log(`data-: ${data}`)
-        let domTree = makeDom(data)
-        console.log(domTree)
-        document.getElementById("parsed-tree").appendChild(wrapBrace(domTree, undefined, braceTypes.CURLY))
+
     })
 </script>
 
@@ -377,5 +414,19 @@
         font-size: 0.8em;
         display: inline;
         font-weight: 400;
+    }
+    
+    #syntax__error {
+        background-color: aquamarine;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-size: 0.8em;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        display: none;
+    }
+    
+    #error__message {
+        font-size: small;
     }
 </style>
