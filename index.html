@@ -28,7 +28,8 @@
         NUMEBR: 'number',
         NULL: 'null',
         URL: 'url',
-        ARRAY: 'array'
+        ARRAY: 'array',
+        BOOL: 'bool'
     }
 
 
@@ -71,6 +72,8 @@
                         return valueTypes.STRING
                     }
                 }
+            case 'boolean':
+                return valueTypes.BOOL
         }
     }
 
@@ -231,12 +234,13 @@
                 }
                 domRoot.appendChild(wrapBrace(arrayCOntainer, key, braceTypes.SQUARE, value.length, valueTypes.ARRAY))
 
-            } else if (typeof value == "string" || typeof value == "number") {
+            } else if (typeof value == "string" || typeof value == "number" || typeof value === "boolean") {
                 var valueType = getValueType(value)
 
                 var div = document.createElement("div")
+                var comma = "<span class='comma'>,</span>";
                 div.setAttribute("class", "object__entry")
-                div.innerHTML = `<span class="keys">${key}</span> <span class="colon">:</span> <span class='${valueType}'>${value}</span>`
+                div.innerHTML = `<span class="keys">${key}</span> <span class="colon">:</span> <span class='${valueType}'>${value}</span> ${comma}`
                 domRoot.appendChild(div)
             } else {
                 var div = makeDom(value)
@@ -381,6 +385,10 @@
     
     .url {
         text-decoration: underline;
+    }
+    
+    .bool {
+        color: #5656ce;
     }
     
     #tree-wrapper {
