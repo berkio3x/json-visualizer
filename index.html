@@ -218,7 +218,16 @@
                     if (value[i] instanceof Object) {
                         var div = makeDom(value[i])
                         div = wrapBrace(div, undefined, braceTypes.CURLY)
+
+                        // every object is seperated by a comma `,` except last one
+                        if (i < value.length - 1) {
+                            var trailingComa = document.createElement("span")
+                            trailingComa.innerText = " ,"
+                            div.appendChild(trailingComa)
+                        }
+
                         arrayCOntainer.appendChild(div)
+
                     } else {
                         var div = document.createElement("div")
                         div.setAttribute("class", "array__element")
