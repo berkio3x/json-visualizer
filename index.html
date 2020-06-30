@@ -297,16 +297,14 @@
 
         var error = false
         try {
-            data = JSON.parse(data)
+            parseDdata = JSON.parse(data)
         } catch (e) {
             error = true
             ErrorMessage(e.toString())
         }
         if (!error) {
-            var beautifiedJson = JSON.stringify(data, null, 4);
-            sourceInput.value = beautifiedJson
             clearErrorMessage()
-            let domTree = makeDom(data)
+            let domTree = makeDom(parseDdata)
             document.getElementById("parsed-tree").appendChild(wrapBrace(domTree, undefined, braceTypes.CURLY))
         }
 
