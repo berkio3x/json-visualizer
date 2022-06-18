@@ -4,7 +4,8 @@
     <div class="main">
         <textarea name="raw" id="source" placeholder="Paste json here."></textarea>
         <div id="tree-wrapper">
-            <div id="error_message_container"><span id="syntax__error">Syntax error</span> <label id="error__message"></label></div>
+            <div id="error_message_container"><span id="syntax__error">Syntax error</span> <label
+                    id="error__message"></label></div>
             <!-- <input id="show__indices" type="checkbox" onchange="function ">Show index</input> -->
             <div id="parsed-tree">
             </div>
@@ -106,7 +107,7 @@
     function makeCollapseIcon() {
         var icon = document.createElement("img")
         icon.setAttribute("class", "collapse__icon")
-            // icon.style.visibility = "hidden";
+        // icon.style.visibility = "hidden";
         icon.style.display = "none"
         icon.src = './icons8-plus-black.svg'
         return icon
@@ -116,10 +117,10 @@
 
 
     function addCollapseIconEvents(collapseIconelement, collapseIconelementWrapper) {
-        collapseIconelementWrapper.onmouseenter = function() {
+        collapseIconelementWrapper.onmouseenter = function () {
             collapseIconelement.style.visibility = "visible";
         }
-        collapseIconelementWrapper.onmouseleave = function() {
+        collapseIconelementWrapper.onmouseleave = function () {
             collapseIconelement.style.visibility = "hidden";
         }
 
@@ -188,12 +189,12 @@
         endBrace.innerText = `${brace.close}`
         endBrace.setAttribute("class", "end-brace")
         warpperDiv.appendChild(endBrace)
-        startBrace.onmouseenter = function() {
+        startBrace.onmouseenter = function () {
             dom.style.borderLeft = "solid 0.7px"
             dom.style.borderLeftColor = "#ABB2B9"
 
         }
-        startBrace.onmouseleave = function() {
+        startBrace.onmouseleave = function () {
             dom.style.borderLeft = "none"
         }
 
@@ -325,13 +326,13 @@
     * {
         box-sizing: border-box !important;
     }
-    
+
     .main {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        grid-gap: 10px;
+        grid-gap: 2px;
     }
-    
+
     #source {
         /* border: solid 1px black; */
         height: 100vh;
@@ -339,70 +340,71 @@
         border-bottom: none;
         border-right-color: #cfd5da;
     }
-    
+
     textarea:focus {
         outline: none;
     }
-    
+
     .start-brace,
     .end-brace {
         color: #2C3E50;
         font-style: bold;
     }
-    
+
     #parsed-tree {
-        font-size: 12px;
+        font-size: 14px;
         /* font-family: monospace; */
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     }
-    
-     ::placeholder {
+
+    ::placeholder {
         font-size: 40px;
         font-weight: bold;
         font-family: sans-serif;
         color: #cecdcd;
     }
-    
+
     .keys {
         color: #616A6B;
     }
-    
+
     .keys:hover {
         cursor: pointer;
     }
-    
+
     .collapse__icon {
         width: 10px;
         height: 10px;
         margin-right: 3px;
     }
-    
+
     .number {
-        color: #F39C12!important;
+        color: #F39C12 !important;
     }
-    
+
     .string {
         color: #239B56;
     }
-    
+
     .null {
         font-style: italic;
         color: #c59e1d;
     }
-    
+
     .url {
         text-decoration: underline;
+        color: #3333ff;
     }
-    
+
     .bool {
         color: #5656ce;
     }
-    
+
     #tree-wrapper {
         height: 100vh;
         overflow-y: scroll;
     }
-    
+
     .array__index {
         margin-right: 6px;
         /* background-color: rgb(203, 253, 145); */
@@ -417,12 +419,12 @@
         border-radius: 22%;
         display: none;
     }
-    
+
     .object__entry,
     .array__element {
         padding-left: 10px;
     }
-    
+
     .array__count {
         /* background-color: #5420ce;
         color: white; */
@@ -440,7 +442,7 @@
         display: inline;
         font-weight: 400;
     }
-    
+
     #syntax__error {
         background-color: aquamarine;
         padding-left: 5px;
@@ -450,13 +452,33 @@
         padding-bottom: 2px;
         display: none;
     }
-    
+
     #error__message {
         font-size: small;
     }
-    
+
     .colon {
         font-size: 12px;
         font-weight: bolder;
+    }
+
+    /* width */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
 </style>
